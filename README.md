@@ -1,6 +1,8 @@
 <!-- Blossom-festival profile. Panels are inverted on purpose: GitHub dark mode shows the light panels,
-     light mode shows the dark ones. Dividers follow the page so they stay visible. -->
-<picture><source media="(prefers-color-scheme: dark)" srcset="assets/banner-light.webp"><img src="assets/banner-dark.webp" alt="Cherub Destine Benson · Computer Engineer · AI automation, data analytics, games and 3D web builds" width="100%"></picture>
+     light mode shows the dark ones. Dividers follow the page so they stay visible.
+     The banner rotates: .github/workflows/rotate-banner.yml puts a random variant from assets/banners/
+     (own pattern, glyphs, petals; the logo blooms in once per load) on the `banner` branch every 30 min. -->
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ventixz/Ventixz/banner/day.webp"><img src="https://raw.githubusercontent.com/Ventixz/Ventixz/banner/night.webp" alt="Cherub Destine Benson · Computer Engineer · AI automation, data analytics, games and 3D web builds" width="100%"></picture>
 
 <p align="center">
   <a href="https://discord.com/users/271138859603984385"><picture><source media="(prefers-color-scheme: dark)" srcset="https://lanyard.cnrad.dev/api/271138859603984385?theme=light&bg=FDFAF5&borderRadius=18px"><img src="https://lanyard.cnrad.dev/api/271138859603984385?theme=dark&bg=1A1831&borderRadius=18px" alt="Discord activity" width="49%"></picture></a>
