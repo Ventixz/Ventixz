@@ -1,0 +1,50 @@
+name: Rotate profile banner
+
+# README images can't change on every page load (GitHub proxies and caches them, and a README can't run
+# code), so this swaps in a random pre-rendered banner every 30 minutes. Each variant has its own pattern,
+# glyphs and petals, and the logo blooms in once on every load. The current pair lives on the `banner`
+# branch, rebuilt from scratch on every run so main's history stays clean.
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rotate-banner
+  cancel-in-progress: true
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: assets/banners
+
+      - name: Publish a random variant to the banner branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          n=$(ls assets/banners/day-*.webp | wc -l)
+          prev=$(curl -fsS "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/banner/variant.txt" 2>/dev/null || echo none)
+          while :; do
+            id=$(printf '%02d' $(( RANDOM % n + 1 )))
+            if [ "$n" -lt 2 ] || [ "$id" != "$prev" ]; then break; fi
+          done
+          out=$(mktemp -d)
+          cp "assets/banners/day-$id.webp" "$out/day.webp"
+          cp "assets/banners/night-$id.webp" "$out/night.webp"
+          echo "$id" > "$out/variant.txt"
+          cd "$out"
+          git init -q -b banner
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -qm "Banner variant $id"
+          git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" banner
+          echo "published variant $id (was $prev)"
